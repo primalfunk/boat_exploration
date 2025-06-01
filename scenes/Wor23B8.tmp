@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cakjq3y4a3bxp"]
+[gd_scene load_steps=22 format=3 uid="uid://cakjq3y4a3bxp"]
 
 [ext_resource type="Script" path="res://scripts/World.gd" id="1_vc2or"]
 [ext_resource type="Script" path="res://scripts/Boat.gd" id="2_u333l"]
@@ -10,13 +10,6 @@
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_81cxd"]
 size = Vector3(1.47192, 1.50195, 3.34937)
-
-[sub_resource type="Curve" id="Curve_vkt2f"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_lyldp"]
-curve = SubResource("Curve_vkt2f")
 
 [sub_resource type="Gradient" id="Gradient_nwuwr"]
 colors = PackedColorArray(0, 0, 0, 1, 0.662745, 0.662745, 0.662745, 0)
@@ -36,22 +29,15 @@ curve = SubResource("Curve_583yg")
 angle_min = -5.0
 direction = Vector3(0, 0, 0)
 spread = 2.647
-flatness = 0.2
-initial_velocity_min = 0.2
-initial_velocity_max = 1.5
-angular_velocity_min = -10.0
-angular_velocity_max = 10.0
+initial_velocity_max = 1.0
 gravity = Vector3(0, 0, 0)
 damping_max = 1.5
-scale_min = 0.4
-scale_max = 1.2
 scale_curve = SubResource("CurveTexture_omvxx")
 color_ramp = SubResource("GradientTexture1D_mefxk")
-alpha_curve = SubResource("CurveTexture_lyldp")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5awmq"]
 transparency = 1
-shading_mode = 2
+shading_mode = 0
 albedo_color = Color(0.756863, 0.905882, 1, 0.87451)
 proximity_fade_distance = 0.0
 distance_fade_max_distance = 0.0
@@ -114,7 +100,7 @@ shape = SubResource("BoxShape3D_81cxd")
 
 [node name="PropellerParticles" type="GPUParticles3D" parent="Boat"]
 process_priority = -1
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.428406, -2.21537)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.428406, -1.585)
 amount = 150
 randomness = 0.1
 process_material = SubResource("ParticleProcessMaterial_aa1c2")

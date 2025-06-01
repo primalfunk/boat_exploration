@@ -1,10 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://b6aec1uelsttt"]
+[gd_scene load_steps=7 format=3 uid="uid://b6aec1uelsttt"]
 
 [ext_resource type="PackedScene" uid="uid://cq3auqg11m1ox" path="res://scenes/RingIcon.tscn" id="1_0q5c7"]
 [ext_resource type="Script" path="res://scripts/CollectiblePoint.gd" id="1_gdnfx"]
+[ext_resource type="Script" path="res://scripts/OceanMark.gd" id="3_h4w21"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_54oxd"]
 height = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fih0f"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.662745, 1, 0.466667)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3xrl1"]
+material = SubResource("StandardMaterial3D_fih0f")
+top_radius = 1.5
+bottom_radius = 1.5
+height = 1.0
 
 [node name="CollectiblePoint" type="Node3D"]
 script = ExtResource("1_gdnfx")
@@ -17,3 +29,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0938517)
 shape = SubResource("CylinderShape3D_54oxd")
 
 [node name="RingIcon" parent="DetectionZone" instance=ExtResource("1_0q5c7")]
+
+[node name="OceanMark" type="MeshInstance3D" parent="DetectionZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.967753, 0)
+mesh = SubResource("CylinderMesh_3xrl1")
+script = ExtResource("3_h4w21")

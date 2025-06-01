@@ -15,12 +15,25 @@ var current_speed := 0.0
 var direction: Vector3 = Vector3.ZERO
 var smoothed_wave_y := 0.0
 
-const BOAT_HEIGHT := 2.5
+const BOAT_HEIGHT := 4
 const PROP_DEPTH_MARGIN := 0.05
-const WAVE_MAX_HEIGHT := 0.06
+const WAVE_MAX_HEIGHT := 0.035
+const DECK_LEVEL_RATIO := -0.3
 
-const DECK_LEVEL_RATIO := -0.4
+func get_wave_height(x: float, z: float, time: float) -> float:
+	var wave_amp_1 = 0.05
+	var wave_amp_2 = 0.04
+	var wave_freq_1 = 0.9
+	var wave_freq_2 = 0.6
+	var wave_speed = 1.9
+	var t = time * wave_speed
+	var wave1 = sin(x * wave_freq_1 + t) * wave_amp_1
+	var wave2 = cos(z * wave_freq_2 + t) * wave_amp_2
+	return wave1 + wave2
 
+func _ready():
+	configure_particles()
+	
 func update_prompt_visibility(visible: bool):
 	var active_text_color = Color(1.0, 0.95, 0.8, 1.0)        # Pale gold
 	var inactive_text_color = Color(0.8, 0.75, 0.9, 0.1)      # Gentle lavender-white
@@ -77,10 +90,7 @@ func _physics_process(delta):
 		var velocity_vector := boat_back_dir
 		var speed := velocity.length()
 		var jet_strength : float = clamp(speed * 1.5, 1.0, 5.0)
-		if propeller_particles.process_material.resource_local_to_scene == false:
-			propeller_particles.process_material = propeller_particles.process_material.duplicate()
-			propeller_particles.process_material.resource_local_to_scene = true
-		propeller_particles.process_material.set("gravity", Vector3(0, -1.5, 0))
+		propeller_particles.process_material.set("gravity", Vector3(0, -0.9, 0))
 		propeller_particles.process_material.set("velocity", velocity_vector)
 		propeller_particles.lifetime = 3.0
 		propeller_particles.emitting = true
@@ -89,17 +99,48 @@ func _physics_process(delta):
 	else:
 		propeller_particles.emitting = false
 
-	# Calculate wave height
 	var t := Time.get_ticks_msec() / 1000.0
 	var x := global_position.x
 	var z := global_position.z
 
-	var wave_y := sin(x * 0.5 + t * 2.0) * 0.07
-	wave_y += cos(z * 0.6 + t * 2.0) * 0.07
+	# Real wave height from shader function
+	var wave_y := get_wave_height(x, z, t)
 
+	# Smooth the wave height slightly for realism
 	smoothed_wave_y = lerp(smoothed_wave_y, wave_y, 0.05)
 
-	var lower_deck_target_y := smoothed_wave_y - (BOAT_HEIGHT * DECK_LEVEL_RATIO)
-	var propeller_clearance_y := smoothed_wave_y - PROP_DEPTH_MARGIN
+	# Clamp the boat's Y to avoid being submerged
+	var desired_clearance := 0.15  # You can tweak this!
+	var target_y := wave_y + desired_clearance
+	global_position.y = lerp(global_position.y, target_y, 0.05) 
+	
+func configure_particles():
+	if propeller_particles.process_material is ParticleProcessMaterial:
+		var mat: ParticleProcessMaterial = propeller_particles.process_material
 
-	global_position.y = min(lower_deck_target_y, propeller_clearance_y)
+		# Duplicate so we don’t accidentally affect a shared resource
+		if not mat.resource_local_to_scene:
+			mat = mat.duplicate()
+			mat.resource_local_to_scene = true
+			propeller_particles.process_material = mat
+
+		# Chaotic movement setup
+		mat.initial_velocity_min = 0.2
+		mat.initial_velocity_max = 1.5
+		mat.spread = 3.0
+		mat.flatness = 0.3
+
+		mat.angular_velocity_min = -10.0
+		mat.angular_velocity_max = 10.0
+
+		mat.scale_min = 0.4
+		mat.scale_max = 1.2
+
+		# Fade-out over lifetime
+		var alpha_curve := Curve.new()
+		alpha_curve.add_point(Vector2(0.0, 1.0))
+		alpha_curve.add_point(Vector2(0.7, 0.6))
+		alpha_curve.add_point(Vector2(1.0, 0.0))
+		var tex := CurveTexture.new()
+		tex.curve = alpha_curve
+		mat.alpha_curve = tex

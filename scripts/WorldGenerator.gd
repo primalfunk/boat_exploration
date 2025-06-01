@@ -20,13 +20,17 @@ func _ready():
 	generate_world()
 	call_deferred("spawn_collectibles")
 
-func generate_world():
+func generate_world(protected_center: Vector3 = Vector3.ZERO, protected_radius: float = 20.0):
 	# Clear old land
 	for land in land_tiles:
 		remove_child(land)
 		land.free()
 	land_tiles.clear()
-
+	# Remove old RingIcons and CollectiblePoints
+	for child in get_tree().get_nodes_in_group("collectibles"):
+		remove_child(child)
+		child.free()
+		
 	var area = WORLD_SIZE * WORLD_SIZE
 	var target_land_area = area * LAND_COVERAGE
 	var placed_land_area = 0.0
@@ -69,8 +73,9 @@ func spawn_collectibles():
 	for i in 10:
 		var pos = get_valid_water_position()
 		var collectible = CollectiblePoint.instantiate()
-		add_child(collectible)  # ✅ Add it to the tree first
+		add_child(collectible)
 		collectible.global_position = pos + Vector3(0, -1.0, 0)
+		collectible.add_to_group("collectibles")
 
 func place_boat_safely():
 	var boat_pos = Vector3.ZERO
@@ -101,6 +106,7 @@ func place_boat_safely():
 			add_child(collectible)  # ✅ Add to tree first
 			var offset = Vector3(randf_range(-8, 8), -1.0, randf_range(-8, 8))
 			collectible.global_position = boat_pos + offset
+			collectible.add_to_group("collectibles")
 			
 			return
 

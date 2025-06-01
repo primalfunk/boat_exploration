@@ -1,10 +1,10 @@
 shader_type spatial;
 
-uniform float wave_amp_1 = 0.015;
-uniform float wave_amp_2 = 0.015;
-uniform float wave_freq_1 = 0.4;
+uniform float wave_amp_1 = 0.08;
+uniform float wave_amp_2 = 0.04;
+uniform float wave_freq_1 = 0.9;
 uniform float wave_freq_2 = 0.6;
-uniform float wave_speed = 1.7;
+uniform float wave_speed = 1.9;
 
 void vertex() {
     float t = TIME * wave_speed;
