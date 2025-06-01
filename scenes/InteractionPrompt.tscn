@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=3 uid="uid://bvpcsnc6ukcqw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lcrph"]
+bg_color = Color(0.792157, 0.792157, 0.792157, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.317647, 0.317647, 0.317647, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_size = 4
+
+[sub_resource type="FontFile" id="FontFile_po61t"]
+cache/0/40/0/ascent = 0.0
+cache/0/40/0/descent = 0.0
+cache/0/40/0/underline_position = 0.0
+cache/0/40/0/underline_thickness = 0.0
+cache/0/40/0/scale = 1.0
+cache/0/40/0/kerning_overrides/40/0 = Vector2(0, 0)
+cache/0/40/0/kerning_overrides/16/0 = Vector2(0, 0)
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/16/0/kerning_overrides/40/0 = Vector2(0, 0)
+cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_34tl5"]
+font = SubResource("FontFile_po61t")
+font_size = 40
+font_color = Color(0.109804, 0.270588, 0.133333, 1)
+
+[node name="InteractionPrompt" type="CanvasLayer"]
+
+[node name="PromptContainer" type="Panel" parent="."]
+anchors_preset = -1
+anchor_left = 0.864
+anchor_top = 0.854
+anchor_right = 0.943
+anchor_bottom = 0.947
+offset_left = -8.8241
+offset_top = 0.127991
+offset_right = 0.167847
+offset_bottom = -0.135986
+theme_override_styles/panel = SubResource("StyleBoxFlat_lcrph")
+
+[node name="FishingPrompt" type="Label" parent="PromptContainer"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "F"
+label_settings = SubResource("LabelSettings_34tl5")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true

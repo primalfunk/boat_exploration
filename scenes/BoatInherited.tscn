@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://c3k4q6rwmhivb"]
+
+[ext_resource type="PackedScene" uid="uid://do0eha7x50hyj" path="res://models/tugboat.glb" id="1_vurxo"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_apoyt"]
+albedo_color = Color(0.313726, 0.117647, 0.254902, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ugc2"]
+albedo_color = Color(0.0509804, 0.0509804, 0.0509804, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cf418"]
+albedo_color = Color(0.592157, 0.701961, 0.788235, 1)
+
+[node name="Sketchfab_Scene" instance=ExtResource("1_vurxo")]
+
+[node name="Object_5" parent="Sketchfab_model/root/GLTF_SceneRootNode/TugBoatT2_LOD0_13/TugBoatT2Bumper_0" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_apoyt")
+
+[node name="Object_7" parent="Sketchfab_model/root/GLTF_SceneRootNode/TugBoatT2_LOD0_13/TugBoatT2Crane_1" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_1ugc2")
+
+[node name="Object_15" parent="Sketchfab_model/root/GLTF_SceneRootNode/TugBoatT2_LOD0_13/TugBoatT2Hull_5" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_cf418")

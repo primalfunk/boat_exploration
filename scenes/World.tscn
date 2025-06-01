@@ -1,0 +1,131 @@
+[gd_scene load_steps=22 format=3 uid="uid://cakjq3y4a3bxp"]
+
+[ext_resource type="Script" path="res://scripts/World.gd" id="1_vc2or"]
+[ext_resource type="Script" path="res://scripts/Boat.gd" id="2_u333l"]
+[ext_resource type="PackedScene" uid="uid://c3k4q6rwmhivb" path="res://scenes/BoatInherited.tscn" id="3_gn6w3"]
+[ext_resource type="Shader" path="res://shaders/Ocean.gdshader" id="4_ocjtj"]
+[ext_resource type="Script" path="res://scripts/FollowCamera.gd" id="5_w1a44"]
+[ext_resource type="Script" path="res://scripts/WorldGenerator.gd" id="6_kw03j"]
+[ext_resource type="PackedScene" uid="uid://bvpcsnc6ukcqw" path="res://scenes/InteractionPrompt.tscn" id="7_comft"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_81cxd"]
+size = Vector3(1.47192, 1.50195, 3.34937)
+
+[sub_resource type="Gradient" id="Gradient_nwuwr"]
+colors = PackedColorArray(0, 0, 0, 1, 0.662745, 0.662745, 0.662745, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_mefxk"]
+gradient = SubResource("Gradient_nwuwr")
+
+[sub_resource type="Curve" id="Curve_583yg"]
+max_value = 2.0
+_data = [Vector2(0.00263158, 1.34077), 0.0, 0.0, 0, 0, Vector2(0.744737, 1.3144), 0.0, 0.0, 0, 0, Vector2(0.981579, 0.114604), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_omvxx"]
+curve = SubResource("Curve_583yg")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aa1c2"]
+angle_min = -5.0
+direction = Vector3(0, 0, 0)
+spread = 2.647
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0, 0)
+damping_max = 1.5
+scale_curve = SubResource("CurveTexture_omvxx")
+color_ramp = SubResource("GradientTexture1D_mefxk")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5awmq"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.756863, 0.905882, 1, 0.87451)
+proximity_fade_distance = 0.0
+distance_fade_max_distance = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_0nod3"]
+material = SubResource("StandardMaterial3D_5awmq")
+radial_segments = 32
+rings = 16
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3vgpp"]
+render_priority = 0
+shader = ExtResource("4_ocjtj")
+shader_parameter/wave_amp_1 = 0.07
+shader_parameter/wave_amp_2 = 0.08
+shader_parameter/wave_freq_1 = 0.5
+shader_parameter/wave_freq_2 = 0.6
+shader_parameter/wave_speed = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_q5cav"]
+material = SubResource("ShaderMaterial_3vgpp")
+size = Vector2(3000, 3000)
+subdivide_width = 64
+subdivide_depth = 64
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wa11w"]
+render_priority = 0
+shader = ExtResource("4_ocjtj")
+shader_parameter/wave_amp_1 = 0.1
+shader_parameter/wave_amp_2 = 0.2
+shader_parameter/wave_freq_1 = 0.5
+shader_parameter/wave_freq_2 = 0.6
+shader_parameter/wave_speed = 1.0
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_42kyu"]
+
+[sub_resource type="Sky" id="Sky_8nln2"]
+sky_material = SubResource("ProceduralSkyMaterial_42kyu")
+
+[sub_resource type="Environment" id="Environment_17osd"]
+background_mode = 2
+sky = SubResource("Sky_8nln2")
+ambient_light_source = 3
+ambient_light_color = Color(0.0117647, 0.239216, 1, 1)
+ambient_light_energy = 0.0
+tonemap_mode = 1
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_vc2or")
+
+[node name="Boat" type="CharacterBody3D" parent="."]
+script = ExtResource("2_u333l")
+move_speed = 12.0
+
+[node name="BoatModel" parent="Boat" instance=ExtResource("3_gn6w3")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00256348, 0.250977, -0.0943604)
+shape = SubResource("BoxShape3D_81cxd")
+
+[node name="PropellerParticles" type="GPUParticles3D" parent="Boat"]
+process_priority = -1
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.428406, -1.585)
+amount = 150
+randomness = 0.1
+process_material = SubResource("ParticleProcessMaterial_aa1c2")
+draw_pass_1 = SubResource("SphereMesh_0nod3")
+
+[node name="Node3D" type="Node3D" parent="Boat"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, -4.37114e-08, 1.91069e-15, 1, -1, 4.37114e-08, -4.37114e-08, 0, 100, 0)
+
+[node name="Ocean" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0)
+mesh = SubResource("PlaneMesh_q5cav")
+surface_material_override/0 = SubResource("ShaderMaterial_wa11w")
+
+[node name="FollowCamera" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+transform = Transform3D(-1, -4.88862e-08, 7.24768e-08, 0, 0.829038, 0.559193, -8.74228e-08, 0.559193, -0.829038, 0, 4, -6)
+current = true
+script = ExtResource("5_w1a44")
+target = NodePath("../Boat")
+
+[node name="WorldEnv" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_17osd")
+
+[node name="WorldGenerator" type="Node3D" parent="."]
+script = ExtResource("6_kw03j")
+
+[node name="InteractionPrompt" parent="." instance=ExtResource("7_comft")]

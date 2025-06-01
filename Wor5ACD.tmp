@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3 uid="uid://cakjq3y4a3bxp"]
+
+[ext_resource type="Script" path="res://Boat.gd" id="1_2k5fi"]
+[ext_resource type="PackedScene" uid="uid://do0eha7x50hyj" path="res://tugboat.glb" id="1_u6ysy"]
+[ext_resource type="Script" path="res://FollowCamera.gd" id="2_alwo3"]
+[ext_resource type="Shader" path="res://Ocean.gdshader" id="3_ifw8t"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_81cxd"]
+size = Vector3(1.47192, 1.50195, 3.34937)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3vgpp"]
+render_priority = 0
+shader = ExtResource("3_ifw8t")
+shader_parameter/time_scale = 1.0
+shader_parameter/wave_speed = 1.0
+shader_parameter/wave_height = 0.1
+shader_parameter/wave_frequency = 2.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_q5cav"]
+material = SubResource("ShaderMaterial_3vgpp")
+size = Vector2(100, 100)
+
+[node name="World" type="Node3D"]
+
+[node name="Boat" type="CharacterBody3D" parent="."]
+script = ExtResource("1_2k5fi")
+
+[node name="BoatModel" parent="Boat" instance=ExtResource("1_u6ysy")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00256348, 0.250977, -0.0943604)
+shape = SubResource("BoxShape3D_81cxd")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, -4.37114e-08, 1.91069e-15, 1, -1, 4.37114e-08, -4.37114e-08, 0, 100, 0)
+
+[node name="Ocean" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_q5cav")
+
+[node name="FollowCamera" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
+transform = Transform3D(-1, -4.88862e-08, 7.24768e-08, 0, 0.829038, 0.559193, -8.74228e-08, 0.559193, -0.829038, 0, 4, -6)
+current = true
+script = ExtResource("2_alwo3")
+target = NodePath("../Boat")
