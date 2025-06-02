@@ -1,65 +1,35 @@
-[gd_scene load_steps=24 format=3 uid="uid://cakjq3y4a3bxp"]
+[gd_scene load_steps=17 format=3 uid="uid://cakjq3y4a3bxp"]
 
 [ext_resource type="Script" path="res://scripts/World.gd" id="1_vc2or"]
-[ext_resource type="Script" path="res://scripts/Boat.gd" id="2_u333l"]
-[ext_resource type="PackedScene" uid="uid://c3k4q6rwmhivb" path="res://scenes/BoatInherited.tscn" id="3_gn6w3"]
+[ext_resource type="PackedScene" uid="uid://bsb2cn0dw5ftf" path="res://scenes/SentientPlank.tscn" id="2_fug5k"]
 [ext_resource type="Shader" path="res://shaders/Ocean.gdshader" id="4_ocjtj"]
 [ext_resource type="Script" path="res://scripts/FollowCamera.gd" id="5_w1a44"]
 [ext_resource type="Script" path="res://scripts/WorldGenerator.gd" id="6_kw03j"]
 [ext_resource type="PackedScene" uid="uid://bvpcsnc6ukcqw" path="res://scenes/InteractionPrompt.tscn" id="7_comft"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_81cxd"]
-size = Vector3(1.47192, 1.50195, 3.34937)
+[sub_resource type="Gradient" id="Gradient_kbetw"]
+colors = PackedColorArray(0.0705882, 1, 1, 0.243137, 1, 1, 1, 1)
 
-[sub_resource type="Curve" id="Curve_vkt2f"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_g0j2a"]
+gradient = SubResource("Gradient_kbetw")
 
-[sub_resource type="CurveTexture" id="CurveTexture_lyldp"]
-curve = SubResource("Curve_vkt2f")
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0aubl"]
+emission_shape = 1
+emission_sphere_radius = 0.1
+direction = Vector3(0.2, -0.4, -0.5)
+spread = 26.0
+initial_velocity_min = 1.5
+initial_velocity_max = 2.5
+angular_velocity_min = 13.0
+angular_velocity_max = 16.0
+gravity = Vector3(0, -0.1, 0)
+linear_accel_min = -1.5
+linear_accel_max = -1.0
+color_ramp = SubResource("GradientTexture1D_g0j2a")
 
-[sub_resource type="Gradient" id="Gradient_nwuwr"]
-colors = PackedColorArray(0, 0, 0, 1, 0.662745, 0.662745, 0.662745, 0)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_mefxk"]
-gradient = SubResource("Gradient_nwuwr")
-
-[sub_resource type="Curve" id="Curve_583yg"]
-max_value = 2.0
-_data = [Vector2(0.00263158, 1.34077), 0.0, 0.0, 0, 0, Vector2(0.744737, 1.3144), 0.0, 0.0, 0, 0, Vector2(0.981579, 0.114604), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_omvxx"]
-curve = SubResource("Curve_583yg")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aa1c2"]
-angle_min = -5.0
-direction = Vector3(0, 0, 0)
-spread = 2.647
-flatness = 0.2
-initial_velocity_min = 0.2
-initial_velocity_max = 1.5
-angular_velocity_min = -10.0
-angular_velocity_max = 10.0
-gravity = Vector3(0, 0, 0)
-damping_max = 1.5
-scale_min = 0.4
-scale_max = 1.2
-scale_curve = SubResource("CurveTexture_omvxx")
-color_ramp = SubResource("GradientTexture1D_mefxk")
-alpha_curve = SubResource("CurveTexture_lyldp")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5awmq"]
-transparency = 1
-shading_mode = 2
-albedo_color = Color(0.756863, 0.905882, 1, 0.87451)
-proximity_fade_distance = 0.0
-distance_fade_max_distance = 0.0
-
-[sub_resource type="SphereMesh" id="SphereMesh_0nod3"]
-material = SubResource("StandardMaterial3D_5awmq")
-radial_segments = 32
-rings = 16
+[sub_resource type="SphereMesh" id="SphereMesh_i6crc"]
+radius = 0.1
+height = 0.001
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3vgpp"]
 render_priority = 0
@@ -101,26 +71,15 @@ tonemap_mode = 1
 [node name="World" type="Node3D"]
 script = ExtResource("1_vc2or")
 
-[node name="Boat" type="CharacterBody3D" parent="."]
-script = ExtResource("2_u333l")
-move_speed = 12.0
-
-[node name="BoatModel" parent="Boat" instance=ExtResource("3_gn6w3")]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Boat"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00256348, 0.250977, -0.0943604)
-shape = SubResource("BoxShape3D_81cxd")
+[node name="Boat" parent="." instance=ExtResource("2_fug5k")]
 
 [node name="PropellerParticles" type="GPUParticles3D" parent="Boat"]
-process_priority = -1
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.428406, -2.21537)
-amount = 150
-randomness = 0.1
-process_material = SubResource("ParticleProcessMaterial_aa1c2")
-draw_pass_1 = SubResource("SphereMesh_0nod3")
-
-[node name="Node3D" type="Node3D" parent="Boat"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.876413, 0.0103899, 0)
+amount = 300
+lifetime = 2.0
+preprocess = 0.3
+process_material = SubResource("ParticleProcessMaterial_0aubl")
+draw_pass_1 = SubResource("SphereMesh_i6crc")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-4.37114e-08, -1, 0, -4.37114e-08, 1.91069e-15, 1, -1, 4.37114e-08, -4.37114e-08, 0, 100, 0)

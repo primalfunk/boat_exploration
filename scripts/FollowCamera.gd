@@ -3,43 +3,43 @@ extends Camera3D
 @export var target: Node3D
 @export var distance := 9.0
 @export var height := 3.0
-@export var orbit_speed := 60.0
+@export var orbit_speed := 0.3
+@export var zoom_speed := 2.0
+@export var min_distance := 3.0
+@export var max_distance := 15.0
+@export var target_offset := Vector3(0, 0.5, 0) 
 
 var yaw := 0.0
-var pitch := -10.0
+var pitch := -15.0
+var rotating := false
+var last_mouse_pos := Vector2.ZERO
+
+func _unhandled_input(event):
+	# Start rotating on left mouse press
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			rotating = event.pressed
+			last_mouse_pos = event.position
+
+		# Zoom with scroll wheel
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			distance = max(min_distance, distance - zoom_speed)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			distance = min(max_distance, distance + zoom_speed)
+
+	elif event is InputEventMouseMotion and rotating:
+		var delta = event.relative
+		yaw -= delta.x * orbit_speed
+		pitch -= delta.y * orbit_speed
+		pitch = clamp(pitch, -80, -5)
 
 func _process(delta):
 	if target == null:
 		return
 
-	if not (Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right")):
-		var boat_yaw = target.global_transform.basis.get_euler().y
-		yaw = lerp_angle(yaw, rad_to_deg(boat_yaw), delta * 5.0)
-	else:
-		if Input.is_action_pressed("ui_left"):
-			yaw += orbit_speed * delta
-		if Input.is_action_pressed("ui_right"):
-			yaw -= orbit_speed * delta
-
-	# Handle keyboard input
-	if Input.is_action_pressed("ui_left"):
-		yaw += orbit_speed * delta
-	if Input.is_action_pressed("ui_right"):
-		yaw -= orbit_speed * delta
-		
-	var target_pitch = pitch
-
-	if Input.is_action_pressed("cam_pitch_up"):
-		target_pitch -= 120 * delta
-	if Input.is_action_pressed("cam_pitch_down"):
-		target_pitch += 120 * delta
-
-	pitch = clamp(lerp(pitch, target_pitch, 5 * delta), -80, -5)
-	# Convert angles to radians
 	var yaw_rad = deg_to_rad(yaw)
 	var pitch_rad = deg_to_rad(pitch)
 
-	# Convert yaw and pitch to a 3D directional vector
 	var direction = Vector3(
 		sin(yaw_rad) * cos(pitch_rad),
 		sin(pitch_rad),
@@ -47,7 +47,7 @@ func _process(delta):
 	)
 
 	var offset = -direction * distance
+	var target_pos = target.global_transform.origin + target_offset
 
-	# Set camera position and orientation
-	global_position = target.global_transform.origin + Vector3(0, height, 0) + offset
-	look_at(target.global_transform.origin + Vector3(0, height, 0), Vector3.UP)
+	global_position = target_pos + offset
+	look_at(target_pos, Vector3.UP)
